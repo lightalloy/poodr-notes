@@ -93,11 +93,11 @@ If you cannot remove unnecessary dependencies (in a real app), isolate them with
 
 If you cannot remove dependency on the class name, isolates creation of a new instance in a method
 
-'''
+```ruby
 def wheel
   @wheel ||= Wheel.new(rim, tire)
 end
-'''
+```
 
 If you are mindful of dependencies and develop a habit of routinely injecting them, your classes will naturally be loosely coupled
 
