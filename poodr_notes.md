@@ -120,12 +120,12 @@ Sometimes using few fixed-order arguments, followed by an options hash is more c
 
 #### Explicitly Define Defaults
 
-'''
+```ruby
 def initialize(args)
   @chainring = args.fetch(:chainring, 40)
   @wheel = args[:wheel]
 end
-'''
+```
 
 When the defaults are more complicated specify defaults by merging a defaults hash.
 
@@ -135,7 +135,7 @@ If you use a class which is a part of external framework and it requires fixed-o
 It will isolate all knowledge of the external interface in one place and provides an improved interface.
 Wrapper is responsible for creating new instances of external class.
 
-'''
+```ruby
 module GearWrapper
   def self.gear(args)
     SomeFramework::Gear.new(args[:chainring],
@@ -143,7 +143,7 @@ module GearWrapper
                             args[:wheel])
   end
 end
-'''
+```
 
 The sole purpose of this module is to create instances of some other class.
 It's factory :)
@@ -344,7 +344,7 @@ The method can possibly have no explicit dependency on certain class but it does
 
 Don't be blinded by existing classes.
 
-[code]
+```ruby
 # Before refactoring
 class Trip
   attr_reader :bicycles, :customers, :vehicle
@@ -363,8 +363,9 @@ class Trip
     }
   end
 end
+```
 
-[code]
+```ruby
 # After refactoring
 class Trip
   attr_reader :bicycles, :customers, :vehicle
@@ -374,7 +375,7 @@ class Trip
       preparer.prepare_trip(self)}
   end
 end
-
+```
 (each class of preparers implements prepare_trip method)
 
 
@@ -515,13 +516,13 @@ Template method pattern is the technique of defining a basic structure in the su
 ### Implementing Every Template Method
 Explicitly state that subclasses are required to implement a certain message - it provides useful documentation for future programmers.
 
-'''
+```ruby
 class Bicycle
   def default_tire_size
     raise NotImplementedError, "This #{self.class} cannot respond to:"
   end
 end
-'''
+```
 
 This additional information makes the problem inescapably clear. Always document template method requirements by
 implementing matching methods that raise useful errors.
@@ -543,7 +544,7 @@ Subclasses are responsible for what initialization it needs but is no longer res
 
 Hooks can be used to other methods too:
 
-'''
+```ruby
 class Bicycle
   def spares
     {tire_size: tire_size,
@@ -559,7 +560,7 @@ class RoadBike < Bicycl
     {tape_color: tape_color}
   end
 end
-'''
+```
 
 # Chapter 7 Sharing Role Behavior with Modules
 This chapter explores an alternative that uses the techniques of inheritance to share a role.
@@ -685,27 +686,27 @@ It’s time to add a class to represent a single part.
 
 ### Creating a Part
 Parts becomes a simple wrapper around Part objects.
-'''
+```ruby
 chain = Part.new(name: 'chain', description: '10-speed')
 road_tire = Part.new(name: 'tire_size', description: '23')
 road_bike_parts = Parts.new([chain, road_tire])
-'''
+```
 or
-'''
+```ruby
 road_bike = Bicycle.new(size: 'L',
             parts: Parts.new([chain,
             road_tire]))
-'''
+```
 ### Making the Parts Object More Like an Array
-'''
+```ruby
 mountain_bike.spares.size # -> 3
 mountain_bike.parts.size # -> NoMethodError:
-'''
+```
 You can fix the proximate problem by adding a size method to Parts but other array methods (each, sort) will be unavailable.
 You can also make Parts a subclass of Array.
 But there are some problems: there are many methods in Array that return new arrays and they won't respond Parts methods.
 The other solution is to include/extend some modules of Array in Parts class.
-'''
+```ruby
 require 'forwardable'
 class Parts
   extend Forwardable
@@ -720,16 +721,16 @@ class Parts
     select {|part| part.needs_spare}
   end
 end
-'''
+```
 Parts now responds methods like each, size, etc.
 Method + is not implemented.
 
-'''
+```ruby
 mountain_bike = Bicycle.new( size: 'L', 
                              parts: Parts.new([chain, mountain_tire,
                              front_shock,
 			     rear_shock]))
-'''
+```
 
 ## Manufacturing Parts
 Somewhere in your application, some object had to know how to create these Part objects. That knowledge is unnecessary and it can easily leak all over your application.
@@ -742,9 +743,9 @@ PartsFactory module, it's job is to create Part objects.
 First version of PartsFactory takes three arguments, a config , and the names of the classes to be used for Part, and Parts.
 This factory knows the structure of the config array (expects name, description and need_parts to be on certain places)
 Usage:
-'''
+```ruby
 road_parts = PartsFactory.build(road_config)
-'''
+```
 PartsFactory , combined with the new configuration arrays, isolates all the knowledge needed to create a valid Parts .
 ### Leveraging the PartsFactory
 You can now replace the whole Part class with a simple OpenStruct.
@@ -836,14 +837,14 @@ The whole point of dependency injection is that it allows you to substitute
 different concrete classes without changing existing code (roles are more stable than concrete classes)
 If all objects playing role are expensive, you may want to fake a cheap one to make your tests run faster.
 #### Creating Test Doubles
-'''
+```ruby
 # Create a player of the ‘Diameterizable’ role
 class DiameterDouble
   def diameter
     10
   end
 end
-'''
+```
 A test double is a stylized instance of a role player that is used exclusively for testing.
 DiameterDouble is not a mock.
 #### Living the Dream
