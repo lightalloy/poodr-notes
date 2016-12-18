@@ -848,6 +848,27 @@ end
 A test double is a stylized instance of a role player that is used exclusively for testing.
 DiameterDouble is not a mock.
 #### Living the Dream
+If the interface changes, it'll break the app, but tests will still pass cause the double still implements old method.
+When the interface of a role changes, all players of the role must adopt the new interface.
+But it's easy to overlook doubles.
+#### Using Tests to Document Roles
+This problem occurs because the role is nearly invisible.
+One way to raise the role’s visibility is to assert that the object plays it (check if object responds to certain method of the interface, that is implemented in the double).
+But this solution is incomplete: it cannot be shared with other role players and it doesn't prevent doubles from becoming obsolete.
+
+Roles need tests on their own. Replacing coupling with an injected dependency on role isolate the object under test but create a dilemma about whether to inject a real or a fake object.
+Injecting the "real" objects is costly, injecting doubles can speed tests but leave them vulnerable to constructing a fantasy world.
+The act of testing did not, by itself, force an improvement in design. Reducing the coupling is up to you and relies on your understanding of the principles of design.
+
+## Testing Private Methods
+In the pristine world of idealized design they need not be tested, but in the real world you may need tests.
+### Ignoring Private Methods During Tests
+Reasons to omit private method testing:
+- private methods are invoked by public methods that already have tests (testing is redundant)
+- private methods are unstable
+- encourages users to break encapsulation (tests should hide private methods, not expose them).
+### Removing Private Methods from the Class Under Test
+
 
 
 
