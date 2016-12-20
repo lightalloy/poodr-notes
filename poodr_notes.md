@@ -868,12 +868,55 @@ Reasons to omit private method testing:
 - private methods are unstable
 - encourages users to break encapsulation (tests should hide private methods, not expose them).
 ### Removing Private Methods from the Class Under Test
+An object with many private methods probably has too many responsibilities.
+You can extrat some methods into new object with it's own public interface and test its' methods.
+But these methods may be unstable and it's costly to couple to unstable methods.
+### Choosing to Test a Private Method
+Only test private methods if it makes sense.
+E.g. you defer a design decision and write some messy code and end up having private methods that are wildly unstable, it’s reasonable to compound your sins by testing these unstable methods.
 
+## Testing Outgoing Messages
+Outgoing messages are either queries or commands.
+Queries matter only to the object that sends them.
+Commands have effects that are visible to other objects in your application.
+### Ignoring Query Messages
+### Proving Command Messages
+Sometimes it does matter that a message get sent; other parts of your application depend on something that happens as a result.
+You shouldn't duplicate tests by checking the message returned, just need to check that the message is sent.
+You need a mock. Mocks are tests of behavior, as opposed to tests of state.
+test:
+- tells the mock what message to expect
+- triggers the behavior that should cause this expectation to be met
+- asks the mock to verify that it indeed was
+#TODO - see rspec code
+The mock can be configured to return an appropriate value. They are meant to prove messages get sent, they return results only when necessary to get tests to run.
+In a well-designed application, testing outgoing messages is simple.
+## Testing Duck Types
+### Testing Roles
+Your tests should document the existence of the role, prove that each of its players behaves correctly, and show that other objects interact with them appropriately.
+The role’s test should be written once and shared by every player (include it as a module in every role player test)
+The shared module serves as a test and as documentation.
+- role players responds to method
+- message is sent correctly (you can use a mock)
+### Using Role Tests to Validate Doubles
+Solving "Living in a dream" problem:
+Extract checking that object responds_to a certain message into a module of its own.
+You can use the module to prevent test doubles from silently becoming obsolete.
+```ruby
+module DiameterizableInterfaceTest
+  def test_implements_the_diameterizable_interface
+    assert_respond_to(@object, :width)
+  end
+end
+```
+When you treat test doubles as you would any other role player and test them to prove their correctness, you avoid test brittleness and can stub without fear of consequence.
+
+## Testing Inherited Code
 
 
 
 #TODO
-Insert link to code
+Insert the link to code
 Make also a shorter summary
 
 
