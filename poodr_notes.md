@@ -1,4 +1,5 @@
-# Chapter #1
+# Chapter 1
+# Object-Oriented Design
 
 Design Principles:
 
@@ -11,17 +12,14 @@ Interface Segregation
 Dependency Inversion
 
 Others:
-DRY (Don’t Repeat Yourself )
+DRY (Don’t Repeat Yourself)
 Law of Demeter (LoD)
 
 Arranging code to efficiently accommodate change is a matter of design.
 Design is good if it is easy to change (less costly)
 
-===========================================================================
-
-# Chapter #2
-
-## Designing Classes with a Single Responsibility
+# Chapter 2
+# Designing Classes with a Single Responsibility
 
 Design is more the art of preserving changeability than it is the act of achieving
 perfection.
@@ -54,8 +52,9 @@ Do not redesign unless the cost of doing nothing is higher than the cost of redi
 - Are easy to move to another class
 
 ### Isolate Extra Responsibilities in Classes
+Remove the responsibility without committing to a new class, a way to defer the decision about creating new class.
 
-(remove the responsibility without committing to a new class, a way to defer the decision about creating new class)
+```ruby
 class Gear
 ...
   Wheel = Struct.new(:rim, :tire) do
@@ -64,12 +63,11 @@ class Gear
     end
   end
 end
-===========================================================================
-
+```
 # Chapter 3
-## Managing Dependencies
+# Managing Dependencies
 
-An object depends on another object if, when one object changes, the other might be forced to change in turn.
+An object depends on another object if when one object changes, the other might be forced to change in turn.
 
 Recognize dependencies:
 - The name of another class
@@ -179,7 +177,6 @@ This class (and the whole app) will be very hard to change then.
 
 #### Finding the Dependencies That Matter
 
-===========================================================================
 # Chapter 4
 # Creating Flexible Interfaces
 
@@ -317,7 +314,7 @@ The train wrecks of Demeter violations are clues that there are objects whose pu
 If you shift to a message-based perspective, the messages you find will become public interfaces in the objects they lead you to discover.
 
 # Chapter 5
-## Reducing Costs with Duck Typing
+# Reducing Costs with Duck Typing
 
 Duck types are public interfaces that are not tied to any specific class. 
 Duck typed objects are defined more by their behavior than by their class.
@@ -462,7 +459,7 @@ In the real world, compiler preventable runtime type errors almost never occur.
 Dynamic typing allows you to trade compile time type checking, a serious restriction that has high cost and provides little value, for the huge gains in efficiency provided
 by removing the compile/make cycle.
 
-# Ch 6
+# Chapter 6
 # Acquiring Behavior Through Inheritance
 This chapter teaches how to write code that properly uses inheritance, and decide if you should use it.
 
@@ -562,7 +559,8 @@ class RoadBike < Bicycl
 end
 ```
 
-# Chapter 7 Sharing Role Behavior with Modules
+# Chapter 7
+# Sharing Role Behavior with Modules
 This chapter explores an alternative that uses the techniques of inheritance to share a role.
 
 ## Understanding Roles
@@ -669,7 +667,8 @@ Deep, wide hierarchies should be avoided.
 A deep hierarchy has a large set of built-in dependencies, each of which might someday change; programmers tend to be familiar
 with just the classes at their tops and bottoms; the classes in the middle lack attention - that increase a chance of introducing errors.
 
-# Chapter 8. Combining Objects with Composition
+# Chapter 8
+# Combining Objects with Composition
 Composition is the act of combining distinct parts into a complex whole such that the whole becomes more than the sum of its parts.
 The larger object is connected to its parts via a has-a relationship. E.g. the parts are contained within a bicycle.
 
@@ -726,10 +725,10 @@ Parts now responds methods like each, size, etc.
 Method + is not implemented.
 
 ```ruby
-mountain_bike = Bicycle.new( size: 'L', 
-                             parts: Parts.new([chain, mountain_tire,
-                             front_shock,
-			     rear_shock]))
+mountain_bike = Bicycle.new(size: 'L', 
+                            parts: Parts.new([chain, mountain_tire,
+                            front_shock,
+			    rear_shock]))
 ```
 
 ## Manufacturing Parts
@@ -912,13 +911,39 @@ end
 When you treat test doubles as you would any other role player and test them to prove their correctness, you avoid test brittleness and can stub without fear of consequence.
 
 ## Testing Inherited Code
-
-
-
-#TODO
-Insert the link to code
-Make also a shorter summary
-
+### Specifying the Inherited Interface
+The first goal of testing is to prove that all objects in the hierarchy follow the Liskov Substitution Principle (subtypes should be substitutable for their supertypes).
+Write a shared test (BicycleInterfaceTest) for the common contract and include this test in every object (objects should respond to methods of a common interface).
+### Specifying Subclass Responsibilities
+#### Confirming Subclass Behavior
+The abstract Bicycle superclass imposes requirements upon its subclasses, they should share a common test to prove that each meets the requirements (BicycleSubclassTest)
+(test requeired methods like hooks, thay may be implemented in the subclass or inhereted from parent, just to check that subclass does nothing too crazy)
+These classes allow novices to create new subclasses safely, they can just include these tests when they write new subclasses.
+#### Confirming Superclass Enforcement
+Checking that NotImplementedError is raised when one of the methods that should be implemented in subclasses is missing.
+This behavior is in parent class (Bicycle), so we test it in parent class test (BicycleTest).
+Notice that an instance of this abstract class is created in this test (it may need providing some "fake" arguments to make it work).
+### Testing Unique Behavior
+Tests specializations supplied by individual subclasses.
+#### Testing Concrete Subclass Behavior
+It’s important to test these specializations without embedding knowledge of the superclass into the test.
+#### Testing Abstract Superclass Behavior
+Creating an instance of the superclass (Bicycle) is not only hard but the instance might not have all the behavior you need to make the test run.
+Because superclass used template methods to acquire concrete specializations you can stub the behavior that would normally be supplied by subclasses.
+You can even manufacture a testable instance of superclass by creating a new subclass for use solely by this test.
+```ruby
+class StubbedBike < Bicycle
+  def default_tire_size
+    0
+  end
+  def local_spares
+    {saddle: 'painful'}
+  end
+end
+```
+It remains convenient to sometimes create an instance of the abstract superclass directly, even though this requires passing the
+Creating a subclass to supply stubs can be helpful in many situations.
+If you fear that StubbedBike will become obsolete include subclass test to it.
 
 
 
