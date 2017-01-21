@@ -5,17 +5,17 @@ Design Principles:
 
 SOLID:
 
-Single Responsibility
-Open-Closed
-Liskov Substitution
-Interface Segregation
-Dependency Inversion
+Single Responsibility  
+Open-Closed  
+Liskov Substitution  
+Interface Segregation  
+Dependency Inversion  
 
 Others:
-DRY (Don’t Repeat Yourself)
-Law of Demeter (LoD)
+DRY (Don’t Repeat Yourself)  
+Law of Demeter (LoD)  
 
-Arranging code to efficiently accommodate change is a matter of design.
+Arranging code to efficiently accommodate change is a matter of design.  
 Design is good if it is easy to change (less costly)
 
 # Chapter 2
